@@ -3,14 +3,14 @@ import AudioMixer from "audio-mixer";
 import { AutocompleteInteraction, ButtonInteraction, Client, CommandInteraction, GatewayIntentBits, Interaction, VoiceBasedChannel } from "discord.js";
 import { AudioPlayer, StreamType, VoiceConnectionStatus, createAudioResource, entersState, joinVoiceChannel } from "@discordjs/voice";
 
-import { Command } from "./Command.js";
-import { loadCommands } from "./Commands/index.js";
-import { Config } from "../Config.js";
-import { Connection } from "./Connection.js";
-import * as AP from "./AudioPlayer.js";
+import { Command } from "./Command.ts";
+import { loadCommands } from "./Commands/index.ts";
+import { Config } from "../Config.ts";
+import { Connection } from "./Connection.ts";
+import * as AP from "./AudioPlayer.ts";
 import { PassThrough } from "node:stream";
-import { VoiceAudioPlayer } from "./VoiceAudioPlayer.js";
-import { FileWorker } from "../FileWorker.js";
+import { VoiceAudioPlayer } from "./VoiceAudioPlayer.ts";
+import { FileWorker } from "../FileWorker.ts";
 
 
 export class Bot {
@@ -101,12 +101,12 @@ export class Bot {
     }
 
     async connectToVoiceChannel(channel: VoiceBasedChannel, interaction: CommandInteraction) {
-        let connection = joinVoiceChannel({
+        let voiceConnection = joinVoiceChannel({
             channelId: channel.id,
             guildId: channel.guild.id,
             adapterCreator: channel.guild.voiceAdapterCreator
         })
-        await entersState(connection, VoiceConnectionStatus.Ready, 3e3)
+        await entersState(voiceConnection, VoiceConnectionStatus.Ready, 3e3)
         .catch(() => {
             interaction.followUp({
                 ephemeral: true,
@@ -121,13 +121,14 @@ export class Bot {
             })
         })
 
-        this.connections.set(channel.guildId, {
+        let conn = {
             guildId: channel.guildId,
-            player: new VoiceAudioPlayer(connection),
-            connection: connection,
-        });
+            connection: voiceConnection,
+        } as Connection;
+        conn.player = new VoiceAudioPlayer(conn, voiceConnection);
+        this.connections.set(channel.guildId, conn);
 
-        connection.on("stateChange", (oldState, newState) => {
+        voiceConnection.on("stateChange", (oldState, newState) => {
             console.log(`Voice connection state changed: ${oldState.status} -> ${newState.status}`);
             if (newState.status == VoiceConnectionStatus.Destroyed || newState.status == VoiceConnectionStatus.Disconnected) {
                 clearTimeout(this.connections.get(channel.guildId)?.pipeMode?.timer);

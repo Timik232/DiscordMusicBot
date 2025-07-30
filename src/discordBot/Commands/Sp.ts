@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ButtonComponent, ButtonStyle, ComponentType } from "discord.js";
 
-import { Checker } from "../Checker.js";
-import { Command } from "../Command.js";
+import { Checker } from "../Checker.ts";
+import { Command } from "../Command.ts";
 
 
 export const sp: Command = {

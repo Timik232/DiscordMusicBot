@@ -3,12 +3,12 @@ import bodyParser from "body-parser";
 import Express from "express";
 import fileUpload from "express-fileupload";
 
-import { Bot } from "../discordBot/DiscordBot.js";
-import { HTTPStatus } from "./HTTPStatus.js";
-import { Config } from "../Config.js";
-import { FileWorker } from "../FileWorker.js";
-import { JWTHelper } from "../JWTHelper.js";
-import { PlayTryResult } from "../discordBot/VoiceAudioPlayer.js";
+import { Bot } from "../discordBot/DiscordBot.ts";
+import { HTTPStatus } from "./HTTPStatus.ts";
+import { Config } from "../Config.ts";
+import { FileWorker } from "../FileWorker.ts";
+import { JWTHelper } from "../JWTHelper.ts";
+import { PlayTryResult } from "../discordBot/VoiceAudioPlayer.ts";
 
 
 export class Application {

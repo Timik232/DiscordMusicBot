@@ -1,7 +1,8 @@
-import { ApplicationCommandOptionType } from "discord.js";
+import { ApplicationCommandOptionType, TextBasedChannel } from "discord.js";
 
-import { Command } from "../../Command.js";
-import { PlayTryResult } from "../../VoiceAudioPlayer.js";
+import { Command } from "../../Command.ts";
+import { PlayTryResult } from "../../VoiceAudioPlayer.ts";
+import { Checker } from "../../Checker.ts";
 
 
 export const Play: Command = {
@@ -16,12 +17,29 @@ export const Play: Command = {
         }
     ],
     async run(client, interaction) {
+        let connection = this.connections.get(interaction.guildId || "");
+        if (!connection) {
+            let channel = await Checker.GetChannelFromInteraction(interaction);
+            if (!channel) {
+                return;
+            }
+            await this.connectToVoiceChannel(channel, interaction);
+            connection = this.connections.get(interaction.guildId || "")!;
+        }
+
         let file = await this.fileWorker.downloadFile(interaction.options.get("url")?.value as string);
         await interaction.followUp({
             ephemeral: true,
             content: "Downloaded!"
         })
+        if (interaction.channel?.isSendable()) {
+            connection.lastCommandChannel = interaction.channel;
+        }
+        
+
+        console.log(interaction.guildId, file);
         let result = this.player.playSound(interaction.guildId || "", file, true);
+        console.log("Play result: ", result);
         switch (result) {
             case PlayTryResult.Played: 
                 interaction.editReply({content: "Playing!"});

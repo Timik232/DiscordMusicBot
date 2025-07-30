@@ -1,6 +1,6 @@
 import { AudioResource, VoiceConnection } from "@discordjs/voice";
-
-import { VoiceAudioPlayer } from "./VoiceAudioPlayer";
+import { SendableChannels, TextBasedChannel } from "discord.js";
+import { VoiceAudioPlayer } from "./VoiceAudioPlayer.ts";
 
 
 export interface PipeMode {
@@ -14,4 +14,5 @@ export interface Connection {
     connection: VoiceConnection;
     resource?: AudioResource;
     pipeMode?: PipeMode;
+    lastCommandChannel?: SendableChannels;
 }

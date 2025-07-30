@@ -1,5 +1,8 @@
 import { AudioPlayer, AudioPlayerStatus, VoiceConnection, createAudioPlayer, createAudioResource } from "@discordjs/voice";
-import fs from "fs";
+import { } from "discord.js";
+import fs from "node:fs";
+import ytdl from "ytdl-core";
+import { Connection } from "./Connection.ts";
 
 
 export enum PlayTryResult {
@@ -7,8 +10,9 @@ export enum PlayTryResult {
 }
 
 export class VoiceAudioPlayer {
+    connection: Connection;
     player: AudioPlayer;
-    connection: VoiceConnection;
+    voiceConnection: VoiceConnection;
 
     isPlayingSong: boolean = false;
     songsQueue: string[] = [];
@@ -19,10 +23,11 @@ export class VoiceAudioPlayer {
         return this.player.state.status == AudioPlayerStatus.Playing;
     }
 
-    constructor(connection: VoiceConnection) {
+    constructor(connection: Connection, voiceConnection: VoiceConnection) {
         this.connection = connection;
+        this.voiceConnection = voiceConnection;
         this.player = createAudioPlayer();
-        this.connection.subscribe(this.player);
+        this.voiceConnection.subscribe(this.player);
 
         this.player.on("stateChange", (oldState, newState) => {
             if (newState.status == AudioPlayerStatus.Idle) {
@@ -49,6 +54,17 @@ export class VoiceAudioPlayer {
             }
             return PlayTryResult.Queued;
         }
+
+        let id = musicFile.split("\\").pop()?.split(".")[0] || "";
+        console.log(id, ytdl.validateID(id), this.connection.lastCommandChannel);
+        if (ytdl.validateID(id) && this.connection.lastCommandChannel) {
+            ytdl.getBasicInfo(id).then(info => {
+                this.connection.lastCommandChannel?.send({
+                    content: `Now playing:\n> ${info.videoDetails.title}`,
+                })
+            })
+        }
+        
         this.isPlayingSong = true;
         let resource = createAudioResource(fs.createReadStream(musicFile), { inlineVolume: true });
         resource.volume?.setVolume(.15);

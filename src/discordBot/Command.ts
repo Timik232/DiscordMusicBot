@@ -1,6 +1,6 @@
 import { AutocompleteInteraction, CommandInteraction, ChatInputApplicationCommandData, Client } from "discord.js";
 
-import { Bot } from "./DiscordBot.js";
+import { Bot } from "./DiscordBot.ts";
 
 
 export interface Command extends ChatInputApplicationCommandData {

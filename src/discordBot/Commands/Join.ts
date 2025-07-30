@@ -1,5 +1,5 @@
-import { Command } from "../Command.js";
-import { Checker } from "../Checker.js";
+import { Command } from "../Command.ts";
+import { Checker } from "../Checker.ts";
 
 
 export const Ping: Command = {

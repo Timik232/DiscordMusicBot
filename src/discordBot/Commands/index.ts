@@ -1,8 +1,8 @@
-import path from "path";
-import * as fs from "fs";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import * as fs from "node:fs";
+import { fileURLToPath } from "node:url";
 
-import { Command, isCommand } from "../Command.js";
+import { Command, isCommand } from "../Command.ts";
 
 
 export async function loadCommands(currentDir?: string) {

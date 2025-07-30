@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType } from "discord.js";
 
-import { Command } from "../Command.js";
-import { PipeMode } from "../Connection.js";
+import { Command } from "../Command.ts";
+import { PipeMode } from "../Connection.ts";
 
 
 export const Ping: Command = {

@@ -1,7 +1,7 @@
-import { Bot } from "./discordBot/DiscordBot.js";
-import { loadConfig } from "./Config.js";
-import { Application } from "./controlApp/Application.js";
-import { FileWorker } from "./FileWorker.js";
+import { Bot } from "./discordBot/DiscordBot.ts";
+import { loadConfig } from "./Config.ts";
+import { Application } from "./controlApp/Application.ts";
+import { FileWorker } from "./FileWorker.ts";
 
 
 let config = loadConfig();

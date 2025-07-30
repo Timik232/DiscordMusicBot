@@ -1,5 +1,5 @@
-import { Command } from "../Command.js";
-import { JWTHelper } from "../../JWTHelper.js"
+import { Command } from "../Command.ts";
+import { JWTHelper } from "../../JWTHelper.ts"
 
 
 export const GetToken: Command = {

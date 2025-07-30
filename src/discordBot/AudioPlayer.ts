@@ -1,13 +1,13 @@
 import prism from "prism-media";
 import mp3 from "mp3-duration";
-import { createReadStream, readFileSync } from "fs";
-import { Readable } from "stream";
+import { createReadStream, readFileSync } from "node:fs";
+import { Readable } from "node:stream";
 import AudioMixer from "audio-mixer";
 import NanoTimer from "nanotimer";
 
-import { Bot } from "./DiscordBot";
-import { Connection } from "./Connection.js";
-import { PlayTryResult } from "./VoiceAudioPlayer.js";
+import { Bot } from "./DiscordBot.ts";
+import { Connection } from "./Connection.ts";
+import { PlayTryResult } from "./VoiceAudioPlayer.ts";
 
 
 export class AudioPlayer {
@@ -125,6 +125,7 @@ export class AudioPlayer {
 
         console.log(`Playing ${sound} to ${guildId}`);
         let path = this.bot.fileWorker.getFilePath(sound);
+        console.log(`Sound path: ${path}`);
         if (isSong) {
             return connection.player.playSong(path);
         } else {
