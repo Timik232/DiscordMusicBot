@@ -61,6 +61,9 @@ export class Application {
             }
 
             let token = JWTHelper.verify(tokenString);
+            console.log("Token: ", token);
+            console.log("Guild ID: ", guildId);
+            console.log("token.guild: ", token ? token.guild : "null");
             if (!token || token.guild != guildId) {
                 res.status(HTTPStatus.UNAUTHORIZED).json({message: "Incorrect token"});
                 return;
@@ -84,7 +87,7 @@ export class Application {
             }
             
             let fileName = req.files.sound.name.split('.');
-            if (fileName[fileName.length - 1] != "wav") {
+            if (fileName[fileName.length - 1] != "mp3") {
                 res.status(HTTPStatus.BAD_REQUEST).json({message: "Sound must have .mp3 extension"});
                 return;
             }
@@ -93,10 +96,6 @@ export class Application {
                 res.status(HTTPStatus.SUCCESS).json({message: "Sound uploaded"});
                 return;
             })
-        })
-
-        app.get("/sounds", (req, res) => {
-            
         })
     }
 }

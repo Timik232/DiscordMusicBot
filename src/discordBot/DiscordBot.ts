@@ -107,7 +107,8 @@ export class Bot {
             adapterCreator: channel.guild.voiceAdapterCreator
         })
         await entersState(voiceConnection, VoiceConnectionStatus.Ready, 3e3)
-        .catch(() => {
+        .catch((text) => {
+            console.log("Error joining voice channel:", text);
             interaction.followUp({
                 ephemeral: true,
                 content: "Error joining channel!"

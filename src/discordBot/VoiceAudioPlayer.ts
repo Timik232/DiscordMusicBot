@@ -56,7 +56,7 @@ export class VoiceAudioPlayer {
         }
 
         let id = musicFile.split("\\").pop()?.split(".")[0] || "";
-        console.log(id, ytdl.validateID(id), this.connection.lastCommandChannel);
+        // console.log(id, ytdl.validateID(id), this.connection.lastCommandChannel);
         if (ytdl.validateID(id) && this.connection.lastCommandChannel) {
             ytdl.getBasicInfo(id).then(info => {
                 this.connection.lastCommandChannel?.send({
