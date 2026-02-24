@@ -1,0 +1,31 @@
+services:
+  discord-music-bot:
+    image: mrnightfury/discord-music-bot:latest
+    # For local builds, comment 'image' above and uncomment below:
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    container_name: discord-music-bot
+    restart: unless-stopped
+    environment:
+      # Discord bot configuration
+      - TOKEN=${TOKEN}
+      - PREFIX=${PREFIX:-/}
+      - PIPE_MODE_MAX_TIME=${PIPE_MODE_MAX_TIME:-10}
+      - STORAGE_PATH=/app/storage
+      # global-agent: use standard HTTP_PROXY/HTTPS_PROXY env var names
+      - GLOBAL_AGENT_ENVIRONMENT_VARIABLE_NAMESPACE=
+      # Proxy configuration for Discord API access (including voice WebSocket)
+      - HTTP_PROXY=${HTTP_PROXY:-http://host.docker.internal:2080}
+      - HTTPS_PROXY=${HTTPS_PROXY:-http://host.docker.internal:2080}
+      - http_proxy=${HTTP_PROXY:-http://host.docker.internal:2080}
+      - https_proxy=${HTTPS_PROXY:-http://host.docker.internal:2080}
+      - ALL_PROXY=${ALL_PROXY:-http://host.docker.internal:2080}
+      - NO_PROXY=${NO_PROXY:-localhost,127.0.0.1}
+      - no_proxy=${NO_PROXY:-localhost,127.0.0.1}
+    volumes:
+      - ./storage:/app/storage
+    # HTTP API not exposed - bot runs in background
+    # Uncomment if you need local API access:
+    # ports:
+    #   - "3004:80"

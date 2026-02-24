@@ -17,10 +17,15 @@ export class FileWorker {
     constructor(basePath: string) {
         this.basePath = basePath;
 
-        let file = fs.readFileSync(path.join(this.basePath, "soundsList.json"), "utf8");
-        this.sounds = new Map((JSON.parse(file) as SoundFileInfo[]).map(item => {
-            return [item.path, item]
-        }));
+        const filePath = path.join(this.basePath, "soundsList.json");
+        if (fs.existsSync(filePath)) {
+            let file = fs.readFileSync(filePath, "utf8");
+            this.sounds = new Map((JSON.parse(file) as SoundFileInfo[]).map(item => {
+                return [item.path, item]
+            }));
+        } else {
+            this.sounds = new Map();
+        }
 
         this.save();
     }

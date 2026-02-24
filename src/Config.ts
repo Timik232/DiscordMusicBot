@@ -20,9 +20,13 @@ export interface ServerConfig {
 
 export function loadConfig() {
     dotenv.config();
+    if (!process.env.TOKEN) {
+        throw new Error("TOKEN environment variable is required. Set it in .env or pass via docker-compose.");
+    }
+
     let config = {
         bot: {
-            token: process.env.TOKEN || "",
+            token: process.env.TOKEN,
             prefix: process.env.PREFIX || "/",
             pipeModeMaxTimeMinutes: process.env.PIPE_MODE_MAX_TIME || 10
         },

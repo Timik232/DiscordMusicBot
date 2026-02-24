@@ -3,3 +3,5 @@ dist/
 thirdparty/
 storage/
 deno.lock
+.env
+.env.local

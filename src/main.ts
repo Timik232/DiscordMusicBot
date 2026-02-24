@@ -1,3 +1,12 @@
+// Bootstrap global proxy agent BEFORE any other imports that make network connections.
+// This patches http.request/https.request so ALL connections (including @discordjs/voice WebSocket)
+// go through the HTTP_PROXY/HTTPS_PROXY.
+import { bootstrap } from "global-agent";
+if (process.env.HTTP_PROXY || process.env.HTTPS_PROXY) {
+    bootstrap();
+    console.log("Global proxy agent enabled:", process.env.GLOBAL_AGENT_HTTP_PROXY || process.env.HTTP_PROXY);
+}
+
 import { Bot } from "./discordBot/DiscordBot.ts";
 import { loadConfig } from "./Config.ts";
 import { Application } from "./controlApp/Application.ts";
