@@ -49,7 +49,6 @@ export const sp: Command = {
                 }
                 rows[rows.length - 1].push(buttons.shift() as any);
             }
-            // Discord allows max 5 action rows per message
             if (rows.length > 5) {
                 rows = rows.slice(0, 5);
             }

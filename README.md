@@ -1,6 +1,6 @@
 # Discord Music Bot
 
-A TypeScript-based Discord music bot with HTTP control API, powered by Deno runtime.
+A TypeScript-based Discord music bot with HTTP control API.
 
 ## Features
 
@@ -96,11 +96,8 @@ The bot exposes an HTTP API internally. To enable external access, uncomment the
 # Install dependencies
 yarn install
 
-# Run with Deno
-yarn run run
-
-# Or build and run
-yarn run buildnrun
+# Run
+npx tsx src/main.ts
 ```
 
 ## Troubleshooting

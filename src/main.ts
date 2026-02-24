@@ -1,6 +1,3 @@
-// Bootstrap global proxy agent BEFORE any other imports that make network connections.
-// This patches http.request/https.request so ALL connections (including @discordjs/voice WebSocket)
-// go through the HTTP_PROXY/HTTPS_PROXY.
 import { bootstrap } from "global-agent";
 if (process.env.HTTP_PROXY || process.env.HTTPS_PROXY) {
     bootstrap();
