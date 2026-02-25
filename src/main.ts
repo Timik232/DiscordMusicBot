@@ -1,7 +1,11 @@
 import { bootstrap } from "global-agent";
-if (process.env.HTTP_PROXY || process.env.HTTPS_PROXY) {
+import { ProxyAgent, setGlobalDispatcher } from "undici";
+
+const proxyUrl = process.env.HTTP_PROXY || process.env.HTTPS_PROXY;
+if (proxyUrl) {
     bootstrap();
-    console.log("Global proxy agent enabled:", process.env.GLOBAL_AGENT_HTTP_PROXY || process.env.HTTP_PROXY);
+    setGlobalDispatcher(new ProxyAgent(proxyUrl));
+    console.log("Global proxy agent enabled:", proxyUrl);
 }
 
 import { Bot } from "./discordBot/DiscordBot.ts";
