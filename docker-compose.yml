@@ -1,21 +1,29 @@
 services:
+  zapret:
+    build:
+      context: ./zapret
+      dockerfile: Dockerfile
+    container_name: zapret
+    restart: unless-stopped
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    privileged: true
+
   discord-music-bot:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: discord-music-bot
     restart: unless-stopped
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    network_mode: host
+    depends_on:
+      - zapret
     environment:
       - TOKEN=${TOKEN}
       - PREFIX=${PREFIX:-/}
       - PIPE_MODE_MAX_TIME=${PIPE_MODE_MAX_TIME:-10}
       - STORAGE_PATH=/app/storage
-      - GLOBAL_AGENT_ENVIRONMENT_VARIABLE_NAMESPACE=
-      - HTTP_PROXY=${HTTP_PROXY:-http://192.168.1.47:2081}
-      - HTTPS_PROXY=${HTTPS_PROXY:-http://192.168.1.47:2081}
-      - http_proxy=${HTTP_PROXY:-http://192.168.1.47:2081}
-      - https_proxy=${HTTPS_PROXY:-http://192.168.1.47:2081}
     volumes:
       - ./storage:/app/storage
