@@ -25,5 +25,7 @@ services:
       - PREFIX=${PREFIX:-/}
       - PIPE_MODE_MAX_TIME=${PIPE_MODE_MAX_TIME:-10}
       - STORAGE_PATH=/app/storage
+      - HTTP_PROXY=${HTTP_PROXY:-http://192.168.1.47:2081}
+      - HTTPS_PROXY=${HTTPS_PROXY:-http://192.168.1.47:2081}
     volumes:
       - ./storage:/app/storage
