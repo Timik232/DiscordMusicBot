@@ -41,7 +41,10 @@ export class Bot {
             this.setupListeners();
         });
 
-        this.client.login(this.config.bot.token);
+        await this.client.login(this.config.bot.token).catch((err) => {
+            console.error("Failed to login to Discord:", err.message || err);
+            throw err;
+        });
     }
 
     async setupListeners() {
@@ -106,7 +109,7 @@ export class Bot {
             guildId: channel.guild.id,
             adapterCreator: channel.guild.voiceAdapterCreator
         })
-        await entersState(voiceConnection, VoiceConnectionStatus.Ready, 3e3)
+        await entersState(voiceConnection, VoiceConnectionStatus.Ready, 30_000)
         .catch((text) => {
             console.log("Error joining voice channel:", text);
             interaction.followUp({
