@@ -55,25 +55,26 @@ export class FileWorker {
 
         let id = "temp/" + ytdl.getURLVideoID(url);
 
+        const tempDir = path.join(this.basePath, "temp");
+        if (!fs.existsSync(tempDir)) {
+            fs.mkdirSync(tempDir, { recursive: true });
+        }
+
         if (fs.existsSync(path.join(this.basePath, id + ".mp3"))) {
             console.log("Skipping download using cache")
             return id;
         }
 
-        return new Promise<string>((resolve, reject) => {
-            youtubeDl(url, {
-                output: path.join(this.basePath, id + ".mp3"),
-                extractAudio: true,
-                audioFormat: "mp3"
-            }).catch(err => {
-                console.error(err);
-                reject(err);
-            }).then(data => {
-                if (data && typeof data == "string" && data.indexOf("Deleting original file") != -1) {
-                    console.log("File downloaded")
-                    resolve(id);
-                }
-            })
+        return youtubeDl(url, {
+            output: path.join(this.basePath, id + ".mp3"),
+            extractAudio: true,
+            audioFormat: "mp3"
+        }).then(() => {
+            console.log("File downloaded");
+            return id;
+        }).catch(err => {
+            console.error(err);
+            throw err;
         })
     }
 }
