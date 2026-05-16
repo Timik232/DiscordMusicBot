@@ -142,6 +142,14 @@ export class AudioPlayer {
         return connection.player.skipSong();
     }
 
+    toggleLoop(guildId: string): boolean | null {
+        let connection = this.bot.connections.get(guildId || "");
+        if (!connection) {
+            return null;
+        }
+        return connection.player.toggleLoop();
+    }
+
     /**
      * @deprecated
      */

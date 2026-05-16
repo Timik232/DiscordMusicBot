@@ -1,6 +1,6 @@
 import prism from "prism-media";
 import AudioMixer from "audio-mixer";
-import { AutocompleteInteraction, ButtonInteraction, ChatInputCommandInteraction, Client, GatewayIntentBits, Interaction, StringSelectMenuInteraction, VoiceBasedChannel } from "discord.js";
+import { ActionRowBuilder, AutocompleteInteraction, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, Client, GatewayIntentBits, Interaction, StringSelectMenuInteraction, VoiceBasedChannel } from "discord.js";
 import { AudioPlayer, StreamType, VoiceConnectionStatus, createAudioResource, entersState, joinVoiceChannel } from "@discordjs/voice";
 
 import { Command } from "./Command.ts";
@@ -12,6 +12,15 @@ import { PassThrough } from "node:stream";
 import { VoiceAudioPlayer } from "./VoiceAudioPlayer.ts";
 import { PlayTryResult } from "./VoiceAudioPlayer.ts";
 import { FileWorker } from "../FileWorker.ts";
+
+function buildLoopButtonRow(): ActionRowBuilder<ButtonBuilder> {
+    return new ActionRowBuilder<ButtonBuilder>().addComponents(
+        new ButtonBuilder()
+            .setCustomId("loop_toggle")
+            .setEmoji("🔁")
+            .setStyle(ButtonStyle.Secondary)
+    );
+}
 
 
 export class Bot {
@@ -201,6 +210,21 @@ export class Bot {
     async handleButtonClick(client: Client, interaction: ButtonInteraction) {
         let id = interaction.customId;
         console.log("Button id:", id);
+
+        if (id === "loop_toggle") {
+            const connection = this.connections.get(interaction.guildId || "");
+            if (!connection) {
+                await interaction.reply({ content: "❌ Not connected to a voice channel.", ephemeral: true });
+                return;
+            }
+            const newLoopState = connection.player.toggleLoop();
+            await interaction.reply({
+                content: newLoopState ? "🔁 Loop ON" : "➡️ Loop OFF",
+                ephemeral: true,
+            });
+            return;
+        }
+
         if (id) {
             this.player.playSound(interaction.guildId || "", id);
             await interaction.deferUpdate();
@@ -302,6 +326,12 @@ export class Bot {
             connection: voiceConnection,
         } as Connection;
         conn.player = new VoiceAudioPlayer(conn, voiceConnection);
+        conn.player.onSongStart = (songTitle: string) => {
+            conn.lastCommandChannel?.send({
+                content: `Now playing:\n> ${songTitle}`,
+                components: [buildLoopButtonRow()],
+            });
+        };
         this.connections.set(channel.guildId, conn);
         this.updateAloneTimer(channel.guildId);
 
