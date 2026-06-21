@@ -150,6 +150,17 @@ export class AudioPlayer {
         return connection.player.toggleLoop();
     }
 
+    stop(guildId: string) {
+        let connection = this.bot.connections.get(guildId || "");
+        if (!connection) {
+            return false;
+        }
+
+        connection.player.stop();
+        connection.connection.destroy();
+        return true;
+    }
+
     /**
      * @deprecated
      */

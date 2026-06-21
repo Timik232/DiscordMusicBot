@@ -18,7 +18,12 @@ function buildLoopButtonRow(): ActionRowBuilder<ButtonBuilder> {
         new ButtonBuilder()
             .setCustomId("loop_toggle")
             .setEmoji("🔁")
-            .setStyle(ButtonStyle.Secondary)
+            .setStyle(ButtonStyle.Secondary),
+        new ButtonBuilder()
+            .setCustomId("playback_stop")
+            .setEmoji("⏹️")
+            .setLabel("Stop")
+            .setStyle(ButtonStyle.Danger)
     );
 }
 
@@ -220,6 +225,20 @@ export class Bot {
             const newLoopState = connection.player.toggleLoop();
             await interaction.reply({
                 content: newLoopState ? "🔁 Loop ON" : "➡️ Loop OFF",
+                ephemeral: true,
+            });
+            return;
+        }
+
+        if (id === "playback_stop") {
+            const stopped = this.player.stop(interaction.guildId || "");
+            if (!stopped) {
+                await interaction.reply({ content: "❌ Not connected to a voice channel.", ephemeral: true });
+                return;
+            }
+
+            await interaction.reply({
+                content: "⏹️ Playback stopped. Bot disconnected.",
                 ephemeral: true,
             });
             return;

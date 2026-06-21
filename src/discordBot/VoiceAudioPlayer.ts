@@ -66,6 +66,10 @@ export class VoiceAudioPlayer {
         // console.log(id, ytdl.validateID(id), this.connection.lastCommandChannel);
         if (ytdl.validateID(id)) {
             ytdl.getBasicInfo(id).then(info => {
+                if (!this.isPlayingSong || this.currentSongPath !== musicFile) {
+                    return;
+                }
+
                 if (this.onSongStart) {
                     this.onSongStart(info.videoDetails.title);
                 } else if (this.connection.lastCommandChannel) {
@@ -95,6 +99,15 @@ export class VoiceAudioPlayer {
     toggleLoop(): boolean {
         this.loopEnabled = !this.loopEnabled;
         return this.loopEnabled;
+    }
+
+    stop() {
+        this.songsQueue = [];
+        this.loopEnabled = false;
+        this.currentSongPath = "";
+        this.wasSkipped = false;
+        this.isPlayingSong = false;
+        this.player.stop();
     }
 
     private onSoundEndCallback() {
