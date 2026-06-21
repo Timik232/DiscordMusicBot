@@ -89,6 +89,11 @@ export class FileWorker {
 
         const downloadOptions: YoutubeDlFlags = {
             output: path.join(this.basePath, id + ".mp3"),
+            // Prefer audio-only (a few MB per song). Fall back to the lowest
+            // quality combined stream when no audio-only exists (DRM videos,
+            // some platforms) so we still extract audio without pulling full
+            // HD video. Typical worst fallback: ~150 KB/s of 144p m4v.
+            format: process.env.YOUTUBE_FORMAT || "bestaudio/worst",
             extractAudio: true,
             audioFormat: "mp3",
             noPlaylist: true,
