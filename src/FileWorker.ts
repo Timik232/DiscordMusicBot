@@ -4,6 +4,18 @@ import ytdl from "ytdl-core";
 
 import { youtubeDl } from "youtube-dl-exec"
 
+type YoutubeDlFlags = NonNullable<Parameters<typeof youtubeDl>[1]> & {
+    extractorArgs?: string;
+};
+
+type YoutubeDlJsRuntime = NonNullable<YoutubeDlFlags["jsRuntimes"]>;
+
+const DEFAULT_YOUTUBE_JS_RUNTIME: YoutubeDlJsRuntime = "node:/usr/local/bin/node";
+
+function isYoutubeDlJsRuntime(value: string): value is YoutubeDlJsRuntime {
+    return /^(node|bun|quickjs|deno)(:.+)?$/.test(value);
+}
+
 
 export interface SoundFileInfo {
     path: string;
@@ -65,11 +77,35 @@ export class FileWorker {
             return id;
         }
 
-        return youtubeDl(url, {
+        const cookiesPath = process.env.YOUTUBE_COOKIES_PATH || path.join(this.basePath, "cookies.txt");
+        const configuredJsRuntime = process.env.YOUTUBE_JS_RUNTIME;
+        const jsRuntimes = configuredJsRuntime && isYoutubeDlJsRuntime(configuredJsRuntime)
+            ? configuredJsRuntime
+            : DEFAULT_YOUTUBE_JS_RUNTIME;
+
+        if (configuredJsRuntime && !isYoutubeDlJsRuntime(configuredJsRuntime)) {
+            console.warn(`Invalid YOUTUBE_JS_RUNTIME=${configuredJsRuntime}; using ${DEFAULT_YOUTUBE_JS_RUNTIME}`);
+        }
+
+        const downloadOptions: YoutubeDlFlags = {
             output: path.join(this.basePath, id + ".mp3"),
             extractAudio: true,
-            audioFormat: "mp3"
-        }).then(() => {
+            audioFormat: "mp3",
+            noPlaylist: true,
+            retries: 3,
+            socketTimeout: 30,
+            jsRuntimes,
+            extractorArgs: process.env.YOUTUBE_EXTRACTOR_ARGS || "youtube:player_client=web,tv"
+        };
+
+        if (fs.existsSync(cookiesPath)) {
+            console.log(`Using YouTube cookies from ${cookiesPath}`);
+            downloadOptions.cookies = cookiesPath;
+        } else {
+            console.warn(`YouTube cookies file not found at ${cookiesPath}; download may fail on bot checks`);
+        }
+
+        return youtubeDl(url, downloadOptions).then(() => {
             console.log("File downloaded");
             return id;
         }).catch(err => {

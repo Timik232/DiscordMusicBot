@@ -20,7 +20,12 @@ import { FileWorker } from "./FileWorker.ts";
 
 
 let config = loadConfig();
-console.log("Loaded config: ", config);
+console.log("Loaded config", {
+    server: config.server,
+    fileStoragePath: config.fileStoragePath,
+    prefix: config.bot.prefix,
+    pipeModeMaxTimeMinutes: config.bot.pipeModeMaxTimeMinutes
+});
 
 let fileWorker = new FileWorker(config.fileStoragePath);
 
