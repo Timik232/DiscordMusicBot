@@ -43,7 +43,7 @@ services:
       - STORAGE_PATH=/app/storage
       - HTTP_PROXY=http://192.168.1.48:7890
       - HTTPS_PROXY=http://192.168.1.48:7890
-      - NO_PROXY=.discord.gg,.discord.media,.discord.com,.discordapp.com,.discordapp.net,localhost,127.0.0.1
+      - NO_PROXY=localhost,127.0.0.1
     volumes:
       - ./storage:/app/storage
       - ./vault/secrets:/etc/vault/secrets:ro

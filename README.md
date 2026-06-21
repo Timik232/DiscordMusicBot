@@ -101,6 +101,9 @@ The bot exposes an HTTP API internally. To enable external access, uncomment the
 ### Local Development (without Docker)
 
 ```bash
+# Use Node 22 to match the Docker image and avoid dependency crashes on newer Node releases
+nvm use
+
 # Install dependencies
 yarn install
 
@@ -108,15 +111,27 @@ yarn install
 npx tsx src/main.ts
 ```
 
+### Supported Node.js version
+
+- Local development is expected to run on **Node 22**.
+- Running on **Node 25** currently crashes during dependency loading inside `jsonwebtoken -> jwa -> buffer-equal-constant-time` before the bot starts.
+
+
 ## Troubleshooting
 
 ### Container won't start
 - Verify your Discord bot token is set correctly in `.env`
 - Check logs: `docker-compose logs -f`
+- If local startup crashes before the app logs anything useful, switch to Node 22 (`nvm use`).
+
+### Container shows `unhealthy` even though the bot is online
+- Earlier builds used an HTTP healthcheck on `/sounds`, which can report a false negative in host-network deployments.
+- Rebuild the image so the process-based healthcheck from the Dockerfile is applied.
 
 ### Audio not working
 - Ensure ffmpeg is installed (included in Docker image)
 - Check that the bot has proper Discord permissions
+- If commands fail with `ECONNRESET` to `discord.com:443`, the bot has started but the Discord REST traffic is still failing through the configured proxy. Check the proxy at `HTTP_PROXY` / `HTTPS_PROXY` and the startup proxy configuration in `src/main.ts`.
 
 ### Storage issues
 - Verify the storage volume is mounted correctly
