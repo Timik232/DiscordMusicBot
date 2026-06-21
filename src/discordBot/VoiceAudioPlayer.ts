@@ -39,6 +39,10 @@ export class VoiceAudioPlayer {
                 this.onSoundEndCallback();
             }
         });
+        this.player.on("error", (err: unknown) => {
+            const e = err as { message?: string; stack?: string };
+            console.error(`[PLAYER ERROR ${this.connection.guildId}]`, e?.message, e?.stack);
+        });
     }
 
     playSound(soundFile: string): PlayTryResult {
