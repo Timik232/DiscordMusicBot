@@ -8,7 +8,8 @@ RUN apt-get update && \
 
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
-COPY . .
+COPY src/ ./src/
+COPY tsconfig.json ./
 
 FROM node:22-slim
 
